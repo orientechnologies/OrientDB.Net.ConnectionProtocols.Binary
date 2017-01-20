@@ -1,6 +1,6 @@
 {
   "title": "OrientDB.Net.ConnectionProtocols.Binary",
-  "version": "0.0.49-prerelease",
+  "version": "0.0.50-prerelease",
 
   "dependencies": {
     "OrientDB.Net.Core": "0.0.18-prerelease"
