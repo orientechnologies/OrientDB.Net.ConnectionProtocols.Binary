@@ -17,6 +17,11 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
         public OrientDBBinaryConnection(DatabaseConnectionOptions options, IOrientDBRecordSerializer<byte[]> serializer)
         {
+            if (options == null)
+                throw new ArgumentNullException($"{nameof(options)} cannot be null.");
+            if (serializer == null)
+                throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
+
             _connectionOptions = options;
             _serialier = serializer;
             _payloadFactory = new CommandPayloadConstructorFactory();
@@ -24,6 +29,15 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
         public OrientDBBinaryConnection(string hostname, string username, string password, IOrientDBRecordSerializer<byte[]> serializer, int port = 2424, int poolsize = 10)
         {
+            if (string.IsNullOrWhiteSpace(hostname))
+                throw new ArgumentException($"{nameof(hostname)} cannot be null or zero length.");
+            if (string.IsNullOrWhiteSpace(username))
+                throw new ArgumentException($"{nameof(username)} cannot be null or zero length.");
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException($"{nameof(password)} cannot be null or zero length.");
+            if (serializer == null)
+                throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
+
             _serialier = serializer;
             _connectionOptions = new DatabaseConnectionOptions
             {

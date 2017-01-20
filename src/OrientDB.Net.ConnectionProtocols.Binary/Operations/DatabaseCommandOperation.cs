@@ -20,6 +20,15 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
 
         public DatabaseCommandOperation(ICommandPayloadConstructorFactory payloadFacctory, ConnectionMetaData metaData, IOrientDBRecordSerializer<byte[]> serializer, string query, string fetchPlan = "*:0")
         {
+            if (payloadFacctory == null)
+                throw new ArgumentNullException($"{nameof(payloadFacctory)} cannot be null.");
+            if (metaData == null)
+                throw new ArgumentNullException($"{nameof(metaData)} cannot be null.");
+            if (serializer == null)
+                throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
+            if (string.IsNullOrWhiteSpace(query))
+                throw new ArgumentException($"{nameof(query)} cannot be zero length or null.");
+
             _query = query;
             _fetchPlan = fetchPlan;
             _payloadFactory = payloadFacctory;
@@ -35,6 +44,9 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
         // Will need to create base class for this.
         internal byte[] ReadToken(BinaryReader reader)
         {
+            if (reader == null)
+                throw new ArgumentNullException($"{nameof(reader)} cannot be null.");
+
             var size = reader.ReadInt32EndianAware();
             var token = reader.ReadBytesRequired(size);
 
@@ -47,6 +59,9 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
 
         public CommandResult<T> Execute(BinaryReader reader)
         {
+            if (reader == null)
+                throw new ArgumentNullException($"{nameof(reader)} cannot be null.");
+
             if (_metaData.ProtocolVersion > 26 && _metaData.UseTokenBasedSession)
                 ReadToken(reader);
 
@@ -108,6 +123,9 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
 
         private T ParseDocument(BinaryReader reader)
         {
+            if (reader == null)
+                throw new ArgumentNullException($"{nameof(reader)} cannot be null.");
+
             T document;
 
             short classId = reader.ReadInt16EndianAware();

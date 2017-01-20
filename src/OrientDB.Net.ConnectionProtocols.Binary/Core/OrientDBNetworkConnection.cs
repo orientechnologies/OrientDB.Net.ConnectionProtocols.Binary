@@ -16,6 +16,11 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
         public OrientDBNetworkConnection(TcpClient client, NetworkStream stream)
         {
+            if (client == null)
+                throw new ArgumentNullException($"{nameof(client)} cannot be null.");
+            if (stream == null)
+                throw new ArgumentNullException($"{nameof(stream)} cannot be null");
+
             _socket = client;
             _stream = stream;
         }

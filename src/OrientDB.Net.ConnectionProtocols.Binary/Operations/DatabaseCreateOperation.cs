@@ -2,6 +2,7 @@
 using OrientDB.Net.ConnectionProtocols.Binary.Core;
 using System.IO;
 using OrientDB.Net.Core.Abstractions;
+using System;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
 {
@@ -16,6 +17,15 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
 
         public DatabaseCreateOperation(string databaseName, DatabaseType databaseType, StorageType storageType, ConnectionMetaData metaData, ServerConnectionOptions options, IOrientDBRecordSerializer<byte[]> serializer)
         {
+            if (options == null)
+                throw new ArgumentNullException($"{nameof(options)} cannot be null.");
+            if (metaData == null)
+                throw new ArgumentNullException($"{nameof(metaData)} cannot be null.");
+            if (serializer == null)
+                throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
+            if (string.IsNullOrWhiteSpace(databaseName))
+                throw new ArgumentException($"{nameof(databaseName)} cannot be zero length or null.");
+
             _databaseName = databaseName;
             _databaseType = databaseType;
             _storageType = storageType;
@@ -40,8 +50,11 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
             return request;
         }
 
-        OrientDBBinaryConnection IOrientDBOperation<OrientDBBinaryConnection>.Execute(BinaryReader reader)
+        public OrientDBBinaryConnection Execute(BinaryReader reader)
         {
+            if (reader == null)
+                throw new ArgumentNullException($"{nameof(reader)} cannot be null.");
+
             return new OrientDBBinaryConnection(new DatabaseConnectionOptions()
             {
                 Database = _databaseName,
