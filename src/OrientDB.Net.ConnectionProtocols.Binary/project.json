@@ -3,7 +3,7 @@
   "version": "0.0.50-prerelease",
 
   "dependencies": {
-    "OrientDB.Net.Core": "0.0.18-prerelease"
+    "OrientDB.Net.Core": "0.0.19-trans2"
   },
 
   "frameworks": {
