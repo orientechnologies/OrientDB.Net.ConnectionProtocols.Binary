@@ -12,15 +12,17 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
     {
         private readonly OrientDBBinaryConnectionStream _stream;
         private readonly Dictionary<ORID, DatabaseTransactionRequest> _records = new Dictionary<ORID, DatabaseTransactionRequest>();
+        private readonly IOrientDBRecordSerializer<byte[]> _serializer;
 
-        public BinaryOrientDBTransaction(OrientDBBinaryConnectionStream stream)
+        public BinaryOrientDBTransaction(OrientDBBinaryConnectionStream stream, IOrientDBRecordSerializer<byte[]> serializer)
         {
             _stream = stream;
+            _serializer = serializer;
         }
 
         public void AddEntity<T>(T entity) where T : OrientDBEntity
         {
-            var record = new DatabaseTransactionRequest(TransactionRecordType.Create, entity);
+            var record = new DatabaseTransactionRequest(TransactionRecordType.Create, entity, _serializer);
             AddToRecords(record);   
         }
 
