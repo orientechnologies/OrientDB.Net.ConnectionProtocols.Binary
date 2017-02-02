@@ -5,6 +5,8 @@ using OrientDB.Net.ConnectionProtocols.Binary.Core;
 using System.Collections.Generic;
 using OrientDB.Net.ConnectionProtocols.Binary.Operations;
 using OrientDB.Net.Core.Exceptions;
+using OrientDB.Net.ConnectionProtocols.Binary.Operations.Results;
+using System.Linq;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Command
 {
@@ -13,11 +15,16 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
         private readonly OrientDBBinaryConnectionStream _stream;
         private readonly Dictionary<ORID, DatabaseTransactionRequest> _records = new Dictionary<ORID, DatabaseTransactionRequest>();
         private readonly IOrientDBRecordSerializer<byte[]> _serializer;
+        private readonly ConnectionMetaData _metaData;
+        private readonly OrientDBBinaryConnectionStream _connectionStream;
 
-        public BinaryOrientDBTransaction(OrientDBBinaryConnectionStream stream, IOrientDBRecordSerializer<byte[]> serializer)
+        public BinaryOrientDBTransaction(OrientDBBinaryConnectionStream stream, IOrientDBRecordSerializer<byte[]> serializer, 
+            ConnectionMetaData metaData, OrientDBBinaryConnectionStream connectionStream)
         {
             _stream = stream;
             _serializer = serializer;
+            _metaData = metaData;
+            _connectionStream = connectionStream;
         }
 
         public void AddEntity<T>(T entity) where T : OrientDBEntity
@@ -49,9 +56,30 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
 
         public void Commit()
         {
-            // Need to hash out the object interactions here.
+            TransactionResult tranResult = _connectionStream.Send(new DatabaseCommitTransactionOperation(_records.Values, _metaData, true));
 
-            throw new NotImplementedException();
+            var survivingRecords = _records.Values.Where(r => r.RecordType != TransactionRecordType.Delete).ToList();
+
+            foreach (var kvp in tranResult.CreatedRecordMapping)
+            {
+                var record = _records[kvp.Key];
+                record.RecordORID = kvp.Value;
+                _records.Add(record.RecordORID, record);                
+            }
+
+            var versions = tranResult.UpdatedRecordVersions;
+            foreach (var kvp in versions)
+            {
+                var record = _records[kvp.Key];
+                record.Version = kvp.Value;
+            }
+
+            Reset();
+        }
+
+        public void Reset()
+        {
+            _records.Clear();
         }
     }
 }

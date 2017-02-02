@@ -77,5 +77,10 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
         {
             Close();
         }
+
+        public IOrientDBTransaction CreateTransaction()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

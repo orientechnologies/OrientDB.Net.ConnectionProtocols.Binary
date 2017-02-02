@@ -62,6 +62,12 @@ namespace OrientDB.Net.ConnectionProtocols.Binary
             return results;
         }
 
+        public IOrientDBTransaction CreateTransaction(IOrientDBRecordSerializer<byte[]> serializer)
+        {
+            IOrientDBConnection connection = GetConnection(_options, serializer);
+            return connection.CreateTransaction();
+        }
+
         public void Dispose()
         {
             GetConnection().Dispose();
