@@ -2,8 +2,8 @@
 {
     internal enum TransactionRecordType
     {
-        Create,
-        Update,
-        Delete
+        Create = 3,
+        Update = 1,
+        Delete = 2
     }
 }

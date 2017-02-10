@@ -20,6 +20,11 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
             _serializer = serializer;
         }
 
+        public string EntityName
+        {
+            get { return _entity.GetType().Name; }
+        }
+
         public ORID RecordORID
         {
             get { return _entity.ORID; }
@@ -43,8 +48,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
             request.AddDataItem((byte)RecordType);
             request.AddDataItem(RecordORID.ClusterId);
             request.AddDataItem(RecordORID.ClusterPosition);
-            request.AddDataItem(Encoding.UTF8.GetBytes(new[] { 'd' }));
-            //request.AddDataItem((byte)ORecordType.Document);
+            request.AddDataItem((byte)ORecordType.Document);
 
             var serializedDocument = _serializer.Serialize(_entity);
             switch(RecordType)

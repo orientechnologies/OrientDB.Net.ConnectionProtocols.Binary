@@ -48,7 +48,6 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
 
             request.AddDataItem(byte.MinValue);
             request.AddDataItem("");
-            //request.AddDataItem((int)0);
 
             return request;
         }        

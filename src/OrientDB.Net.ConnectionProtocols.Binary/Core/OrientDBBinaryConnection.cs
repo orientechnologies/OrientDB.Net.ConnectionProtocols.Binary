@@ -3,6 +3,7 @@ using OrientDB.Net.ConnectionProtocols.Binary.Contracts;
 using OrientDB.Net.ConnectionProtocols.Binary.Operations;
 using System;
 using OrientDB.Net.Core.Abstractions;
+using System.Linq;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 {
@@ -80,7 +81,11 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
         public IOrientDBTransaction CreateTransaction()
         {
-            return new BinaryOrientDBTransaction(_connectionStream, _serialier, _connectionStream.ConnectionMetaData);
+            return new BinaryOrientDBTransaction(_connectionStream, _serialier, _connectionStream.ConnectionMetaData, (clusterName) =>
+            {
+                var schema = CreateCommand().Execute<ClassSchema>($"select expand(classes) from metadata:schema").First(n => n.Name == clusterName);
+                return schema.DefaultClusterId;
+            });
         }
     }
 }

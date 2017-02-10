@@ -6,6 +6,7 @@ using OrientDB.Net.ConnectionProtocols.Binary.Operations;
 using OrientDB.Net.Core.Exceptions;
 using OrientDB.Net.ConnectionProtocols.Binary.Operations.Results;
 using System.Linq;
+using System;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Command
 {
@@ -15,13 +16,15 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
         private readonly Dictionary<ORID, DatabaseTransactionRequest> _records = new Dictionary<ORID, DatabaseTransactionRequest>();
         private readonly IOrientDBRecordSerializer<byte[]> _serializer;
         private readonly ConnectionMetaData _metaData;
+        private readonly Func<string, short> _clusterIdResolver;
 
         public BinaryOrientDBTransaction(OrientDBBinaryConnectionStream stream, IOrientDBRecordSerializer<byte[]> serializer, 
-            ConnectionMetaData metaData)
+            ConnectionMetaData metaData, Func<string, short> clusterIdResolver)
         {
             _stream = stream;
             _serializer = serializer;
             _metaData = metaData;
+            _clusterIdResolver = clusterIdResolver;
         }
 
         public void AddEntity<T>(T entity) where T : OrientDBEntity
@@ -38,8 +41,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
             if(!hasOrid)
             {
                 record.RecordORID = ORID.NewORID();
-                record.RecordORID.ClusterId = 1; // Need to create logic to retrieve ClusterId for the record's class.
-                record.RecordORID.ClusterPosition = -2;
+                record.RecordORID.ClusterId = _clusterIdResolver(record.EntityName);          
             }
 
             if (_records.ContainsKey(record.RecordORID))
