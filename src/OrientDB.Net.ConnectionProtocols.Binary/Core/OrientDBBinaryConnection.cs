@@ -80,7 +80,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
         public IOrientDBTransaction CreateTransaction()
         {
-            throw new NotImplementedException();
+            return new BinaryOrientDBTransaction(_connectionStream, _serialier, _connectionStream.ConnectionMetaData);
         }
     }
 }

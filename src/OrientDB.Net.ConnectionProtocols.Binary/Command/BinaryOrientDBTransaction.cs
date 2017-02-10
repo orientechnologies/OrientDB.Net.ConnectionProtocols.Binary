@@ -1,5 +1,4 @@
-﻿using System;
-using OrientDB.Net.Core.Abstractions;
+﻿using OrientDB.Net.Core.Abstractions;
 using OrientDB.Net.Core.Models;
 using OrientDB.Net.ConnectionProtocols.Binary.Core;
 using System.Collections.Generic;
@@ -16,15 +15,13 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
         private readonly Dictionary<ORID, DatabaseTransactionRequest> _records = new Dictionary<ORID, DatabaseTransactionRequest>();
         private readonly IOrientDBRecordSerializer<byte[]> _serializer;
         private readonly ConnectionMetaData _metaData;
-        private readonly OrientDBBinaryConnectionStream _connectionStream;
 
         public BinaryOrientDBTransaction(OrientDBBinaryConnectionStream stream, IOrientDBRecordSerializer<byte[]> serializer, 
-            ConnectionMetaData metaData, OrientDBBinaryConnectionStream connectionStream)
+            ConnectionMetaData metaData)
         {
             _stream = stream;
             _serializer = serializer;
             _metaData = metaData;
-            _connectionStream = connectionStream;
         }
 
         public void AddEntity<T>(T entity) where T : OrientDBEntity
@@ -42,6 +39,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
             {
                 record.RecordORID = ORID.NewORID();
                 record.RecordORID.ClusterId = 1; // Need to create logic to retrieve ClusterId for the record's class.
+                record.RecordORID.ClusterPosition = -2;
             }
 
             if (_records.ContainsKey(record.RecordORID))
@@ -56,7 +54,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
 
         public void Commit()
         {
-            TransactionResult tranResult = _connectionStream.Send(new DatabaseCommitTransactionOperation(_records.Values, _metaData, true));
+            TransactionResult tranResult = _stream.Send(new DatabaseCommitTransactionOperation(_records.Values, _metaData, true));
 
             var survivingRecords = _records.Values.Where(r => r.RecordType != TransactionRecordType.Delete).ToList();
 
@@ -80,6 +78,47 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
         public void Reset()
         {
             _records.Clear();
+        }
+
+        public void Remove<T>(T entity) where T : OrientDBEntity
+        {
+            var record = new DatabaseTransactionRequest(TransactionRecordType.Delete, entity, _serializer);
+            AddToRecords(record);
+        }
+
+        public void Update<T>(T entity) where T : OrientDBEntity
+        {
+            var record = new DatabaseTransactionRequest(TransactionRecordType.Update, entity, _serializer);
+            AddToRecords(record);
+        }
+
+        public void AddEdge(Edge edge, Vertex from, Vertex to)
+        {
+            AddEntity(edge);
+            edge.SetField("out", from.ORID);
+            edge.SetField("in", to.ORID);
+
+            AppendORIDToField(from, $"out_{edge.OClassName}", edge.ORID);
+            AppendORIDToField(to, $"in_{edge.OClassName}", edge.ORID);
+
+            if (!_records.ContainsKey(from.ORID))
+                Update(from);
+            if (!_records.ContainsKey(to.ORID))
+                Update(to);
+        }        
+
+        private void AppendORIDToField(DictionaryOrientDBEntity entity, string field, ORID orid)
+        {
+            if(entity.Fields.Keys.Contains(field))
+            {
+                entity.SetField(field, entity.GetField<HashSet<ORID>>(field).Add(orid));
+            }
+            else
+            {
+                var oridHashSet = new HashSet<ORID>();
+                oridHashSet.Add(orid);
+                entity.SetField(field, oridHashSet);
+            }
         }
     }
 }

@@ -27,7 +27,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
 
         public Request CreateRequest(int sessionId, byte[] token)
         {
-            var request = new Request(OperationMode.Synchronous);
+            var request = new Request(OperationMode.Synchronous, sessionId);
 
             request.AddDataItem((byte)OperationType.TX_COMMIT);
             request.AddDataItem(sessionId);
@@ -46,8 +46,9 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
                 item.AddToRequest(request);
             }
 
-            request.AddDataItem((byte)0);
-            request.AddDataItem((int)0);
+            request.AddDataItem(byte.MinValue);
+            request.AddDataItem("");
+            //request.AddDataItem((int)0);
 
             return request;
         }        

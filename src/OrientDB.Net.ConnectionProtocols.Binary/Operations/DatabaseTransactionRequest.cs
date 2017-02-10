@@ -1,9 +1,9 @@
-﻿using OrientDB.Net.ConnectionProtocols.Binary.Contracts;
-using System;
+﻿using System;
 using OrientDB.Net.ConnectionProtocols.Binary.Core;
 using OrientDB.Net.Core.Models;
 using OrientDB.Net.Core.Abstractions;
 using OrientDB.Net.ConnectionProtocols.Binary.Constants;
+using System.Text;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
 {
@@ -43,7 +43,8 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
             request.AddDataItem((byte)RecordType);
             request.AddDataItem(RecordORID.ClusterId);
             request.AddDataItem(RecordORID.ClusterPosition);
-            request.AddDataItem((byte)ORecordType.Document);
+            request.AddDataItem(Encoding.UTF8.GetBytes(new[] { 'd' }));
+            //request.AddDataItem((byte)ORecordType.Document);
 
             var serializedDocument = _serializer.Serialize(_entity);
             switch(RecordType)
