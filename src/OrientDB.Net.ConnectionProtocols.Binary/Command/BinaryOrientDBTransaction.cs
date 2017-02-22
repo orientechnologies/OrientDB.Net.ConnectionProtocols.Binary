@@ -41,7 +41,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
             if(!hasOrid)
             {
                 record.RecordORID = ORID.NewORID();
-                record.RecordORID.ClusterId = _clusterIdResolver(record.EntityName);          
+                record.RecordORID.ClusterId = _clusterIdResolver(record.EntityName);                    
             }
 
             if (_records.ContainsKey(record.RecordORID))
@@ -62,7 +62,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
 
             foreach (var kvp in tranResult.CreatedRecordMapping)
             {
-                var record = _records[kvp.Key];
+                var record = _records.First(n => n.Key.ToString() == kvp.Key.ToString()).Value;
                 record.RecordORID = kvp.Value;
                 _records.Add(record.RecordORID, record);                
             }
