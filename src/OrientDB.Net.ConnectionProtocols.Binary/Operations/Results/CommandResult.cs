@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
+namespace OrientDB.Net.ConnectionProtocols.Binary.Operations.Results
 {
     internal class CommandResult<T>
     {

@@ -1,4 +1,4 @@
-﻿namespace Operations
+﻿namespace OrientDB.Net.ConnectionProtocols.Binary.Operations.Results
 {
     public class VoidResult
     {

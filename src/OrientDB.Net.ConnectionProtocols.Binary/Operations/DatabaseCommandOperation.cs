@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using OrientDB.Net.Core.Abstractions;
 using OrientDB.Net.Core.Models;
+using OrientDB.Net.ConnectionProtocols.Binary.Operations.Results;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
 {

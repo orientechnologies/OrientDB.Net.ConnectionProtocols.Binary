@@ -4,6 +4,7 @@ using OrientDB.Net.ConnectionProtocols.Binary.Core;
 using System.IO;
 using OrientDB.Net.ConnectionProtocols.Binary.Constants;
 using OrientDB.Net.ConnectionProtocols.Binary.Extensions;
+using OrientDB.Net.ConnectionProtocols.Binary.Operations.Results;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
 {

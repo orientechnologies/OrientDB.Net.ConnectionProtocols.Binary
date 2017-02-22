@@ -4,6 +4,7 @@ using OrientDB.Net.ConnectionProtocols.Binary.Operations;
 using System;
 using OrientDB.Net.Core.Abstractions;
 using System.Linq;
+using OrientDB.Net.ConnectionProtocols.Binary.Operations.Results;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 {
@@ -59,8 +60,6 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
                 stream.SessionId = _openResult.SessionId;
                 stream.Token = _openResult.Token;
             }
-            
-            //_connectionStream.ConnectionMetaData.SessionId = _openResult.SessionId; // This is temporary.
         }
 
         public void Close()

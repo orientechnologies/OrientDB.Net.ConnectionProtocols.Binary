@@ -2,6 +2,7 @@
 using OrientDB.Net.ConnectionProtocols.Binary.Contracts;
 using OrientDB.Net.ConnectionProtocols.Binary.Core;
 using OrientDB.Net.ConnectionProtocols.Binary.Extensions;
+using OrientDB.Net.ConnectionProtocols.Binary.Operations.Results;
 using System.Collections.Generic;
 using System.IO;
 

@@ -1,4 +1,4 @@
-﻿namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
+﻿namespace OrientDB.Net.ConnectionProtocols.Binary.Operations.Results
 {
     public class OpenServerResult
     {

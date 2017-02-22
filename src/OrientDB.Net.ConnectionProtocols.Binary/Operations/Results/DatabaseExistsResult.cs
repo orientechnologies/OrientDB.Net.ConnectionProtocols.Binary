@@ -1,4 +1,4 @@
-﻿namespace Operations.Results
+﻿namespace OrientDB.Net.ConnectionProtocols.Binary.Operations.Results
 {
     class DatabaseExistsResult
     {
