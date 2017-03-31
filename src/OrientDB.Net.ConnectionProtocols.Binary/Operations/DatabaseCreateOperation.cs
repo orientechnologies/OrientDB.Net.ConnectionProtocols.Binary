@@ -3,6 +3,7 @@ using OrientDB.Net.ConnectionProtocols.Binary.Core;
 using System.IO;
 using OrientDB.Net.Core.Abstractions;
 using System;
+using OrientDB.Net.Core.Models;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
 {

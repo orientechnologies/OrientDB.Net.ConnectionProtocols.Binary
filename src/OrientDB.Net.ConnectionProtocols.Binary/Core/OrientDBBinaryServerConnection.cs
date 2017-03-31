@@ -2,10 +2,12 @@
 using OrientDB.Net.ConnectionProtocols.Binary.Operations;
 using System;
 using OrientDB.Net.Core.Abstractions;
+using System.Collections.Generic;
+using OrientDB.Net.Core.Models;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 {
-    public class OrientDBBinaryServerConnection : IDisposable
+    public class OrientDBBinaryServerConnection : IOrientServerConnection
     {
         private readonly ServerConnectionOptions _options;
         private readonly IOrientDBRecordSerializer<byte[]> _serializer;
@@ -20,6 +22,8 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
             _options = options;
             _serializer = serializer;
+
+            Open();
         }
 
         public void Open()
@@ -31,17 +35,39 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
                 stream.SessionId = _openResult.SessionId;
                 stream.Token = _openResult.Token;
             }
+        }     
+
+        public void Dispose()
+        {
+            _connectionStream.Close();
         }
 
-        public OrientDBBinaryConnection CreateDatabase(string database, DatabaseType type, StorageType storageType)
+        public IOrientDatabaseConnection CreateDatabase(string database, DatabaseType databaseType, StorageType storageType)
         {
             if (string.IsNullOrWhiteSpace(database))
                 throw new ArgumentException($"{nameof(database)} cannot be null or zero length.");
 
-            return _connectionStream.Send(new DatabaseCreateOperation(database, type, storageType, _connectionStream.ConnectionMetaData, _options, _serializer));
+            return _connectionStream.Send(new DatabaseCreateOperation(database, databaseType, storageType, _connectionStream.ConnectionMetaData, _options, _serializer));
         }
 
-        public void DropDatabase(string database, StorageType storageType)
+        public IOrientDatabaseConnection DatabaseConnect(string database, DatabaseType type, int poolSize = 10)
+        {
+            if (string.IsNullOrWhiteSpace(database))
+                throw new ArgumentException($"{nameof(database)} cannot be null or zero length.");
+
+            return new OrientDBBinaryConnection(new DatabaseConnectionOptions
+            {
+                Database = database,
+                HostName = _options.HostName,
+                Password = _options.Password,
+                PoolSize = poolSize,
+                Port = _options.Port,
+                Type = type,
+                UserName = _options.UserName
+            }, _serializer);
+        }
+
+        public void DeleteDatabase(string database, StorageType storageType)
         {
             if (string.IsNullOrWhiteSpace(database))
                 throw new ArgumentException($"{nameof(database)} cannot be null or zero length.");
@@ -57,9 +83,24 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             return _connectionStream.Send(new DatabaseExistsOperation(database, storageType, _connectionStream.ConnectionMetaData, _options)).Exists;
         }
 
-        public void Dispose()
+        public void Shutdown(string username, string password)
         {
-            _connectionStream.Close();
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<string> ListDatabases()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetConfigValue(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetConfigValue(string name, string value)
+        {
+            throw new NotImplementedException();
         }
     }
 }

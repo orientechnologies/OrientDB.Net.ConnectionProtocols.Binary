@@ -1,4 +1,6 @@
-﻿namespace OrientDB.Net.ConnectionProtocols.Binary.Core
+﻿using OrientDB.Net.Core.Models;
+
+namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 {
     public class DatabaseConnectionOptions : ServerConnectionOptions
     {

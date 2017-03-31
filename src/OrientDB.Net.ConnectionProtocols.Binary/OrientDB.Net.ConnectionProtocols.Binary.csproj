@@ -11,11 +11,8 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <Version>0.1.9</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="OrientDB.Net.Core" Version="0.1.0" />
-  </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System" />
@@ -24,6 +21,12 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
     <PackageReference Include="System.Linq" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="OrientDB.Net.Core">
+      <HintPath>..\..\..\OrientDB.Net.Core\src\OrientDB.Net.Core\bin\Debug\netcoreapp1.0\OrientDB.Net.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

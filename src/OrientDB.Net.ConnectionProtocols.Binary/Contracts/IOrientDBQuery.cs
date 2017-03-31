@@ -1,4 +1,5 @@
-﻿using OrientDB.Net.Core.Models;
+﻿using OrientDB.Net.Core.Abstractions;
+using OrientDB.Net.Core.Models;
 using System.Collections.Generic;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Contracts
@@ -7,6 +8,6 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Contracts
     {
         IEnumerable<T> Execute<T>(string query) where T : OrientDBEntity;
 
-        void Execute(string query);
+        IOrientDBCommandResult Execute(string query);
     }
 }

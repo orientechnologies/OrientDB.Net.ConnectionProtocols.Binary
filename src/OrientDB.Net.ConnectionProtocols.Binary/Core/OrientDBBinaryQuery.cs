@@ -33,9 +33,10 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             return _stream.Send(new DatabaseCommandOperation<T>(_payloadFactory, _stream.ConnectionMetaData, _serializer, query)).Results;
         }
 
-        public void Execute(string query)
+        public IOrientDBCommandResult Execute(string query)
         {
             _stream.Send(new VoidResultDatabaseCommandOperation(_payloadFactory, _stream.ConnectionMetaData, _serializer, query));
+            return new BasicCommandResult();
         }
     }
 }

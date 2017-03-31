@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OrientDB.Net.ConnectionProtocols.Binary.Core;
 using OrientDB.Net.Core.Abstractions;
+using OrientDB.Net.Core.Models;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -53,7 +54,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Tests.CoreTests
 
             var conn = new OrientDBBinaryServerConnection(options, mockSerializer.Object);
 
-            Assert.Throws(typeof(ArgumentException), () => conn.DropDatabase(null, StorageType.Memory));
+            Assert.Throws(typeof(ArgumentException), () => conn.DeleteDatabase(null, StorageType.Memory));
         }
 
         [Test]
