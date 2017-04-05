@@ -24,9 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="OrientDB.Net.Core">
-      <HintPath>..\..\..\OrientDB.Net.Core\src\OrientDB.Net.Core\bin\Debug\netcoreapp1.0\OrientDB.Net.Core.dll</HintPath>
-    </Reference>
+    <PackageReference Include="OrientDB.Net.Core" Version="0.1.9" />
   </ItemGroup>
 
 </Project>
