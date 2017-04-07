@@ -15,7 +15,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Tests.CoreTests
         [Test]
         public void ItShouldThrowAnExceptionWhenPassedNullOptions()
         {
-            Assert.Throws(typeof(ArgumentNullException), () => new OrientDBBinaryServerConnection(null, null));
+            Assert.Throws(typeof(ArgumentNullException), () => new OrientDBBinaryServerConnection(null, null, null));
         }
 
         [Test]
@@ -26,7 +26,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Tests.CoreTests
 
             };
 
-            Assert.Throws(typeof(ArgumentNullException), () => new OrientDBBinaryServerConnection(options, null));
+            Assert.Throws(typeof(ArgumentNullException), () => new OrientDBBinaryServerConnection(options, null, null));
         }
 
         [Test]
@@ -37,8 +37,9 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Tests.CoreTests
 
             };
             Mock<IOrientDBRecordSerializer<byte[]>> mockSerializer = new Mock<IOrientDBRecordSerializer<byte[]>>();
+            Mock<IOrientDBLogger> mockLogger = new Mock<IOrientDBLogger>();
 
-            var conn = new OrientDBBinaryServerConnection(options, mockSerializer.Object);
+            var conn = new OrientDBBinaryServerConnection(options, mockSerializer.Object, mockLogger.Object);
 
             Assert.Throws(typeof(ArgumentException), () => conn.CreateDatabase(null, DatabaseType.Document, StorageType.Memory));
         }
@@ -51,8 +52,9 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Tests.CoreTests
 
             };
             Mock<IOrientDBRecordSerializer<byte[]>> mockSerializer = new Mock<IOrientDBRecordSerializer<byte[]>>();
+            Mock<IOrientDBLogger> mockLogger = new Mock<IOrientDBLogger>();
 
-            var conn = new OrientDBBinaryServerConnection(options, mockSerializer.Object);
+            var conn = new OrientDBBinaryServerConnection(options, mockSerializer.Object, mockLogger.Object);
 
             Assert.Throws(typeof(ArgumentException), () => conn.DeleteDatabase(null, StorageType.Memory));
         }
@@ -65,8 +67,9 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Tests.CoreTests
 
             };
             Mock<IOrientDBRecordSerializer<byte[]>> mockSerializer = new Mock<IOrientDBRecordSerializer<byte[]>>();
+            Mock<IOrientDBLogger> mockLogger = new Mock<IOrientDBLogger>();
 
-            var conn = new OrientDBBinaryServerConnection(options, mockSerializer.Object);
+            var conn = new OrientDBBinaryServerConnection(options, mockSerializer.Object, mockLogger.Object);
 
             Assert.Throws(typeof(ArgumentException), () => conn.DatabaseExists(null, StorageType.Memory));
         }

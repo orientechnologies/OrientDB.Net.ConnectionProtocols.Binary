@@ -13,24 +13,19 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
         private readonly OrientDBBinaryConnectionStream _stream;
         private readonly IOrientDBRecordSerializer<byte[]> _serializer;
         private readonly ICommandPayloadConstructorFactory _payloadFactory;
+        private readonly IOrientDBLogger _logger;
 
-        internal OrientDBCommand(OrientDBBinaryConnectionStream stream, IOrientDBRecordSerializer<byte[]> serializer, ICommandPayloadConstructorFactory payloadFactory)
+        internal OrientDBCommand(OrientDBBinaryConnectionStream stream, IOrientDBRecordSerializer<byte[]> serializer, ICommandPayloadConstructorFactory payloadFactory, IOrientDBLogger logger)
         {
-            if (stream == null)
-                throw new ArgumentNullException($"{nameof(stream)} cannot be null.");
-            if (serializer == null)
-                throw new ArgumentNullException($"{nameof(serializer)} cannot be null");
-            if (payloadFactory == null)
-                throw new ArgumentNullException($"{nameof(payloadFactory)} cannot be null");
-
-            _stream = stream;
-            _serializer = serializer;
-            _payloadFactory = payloadFactory;
+            _stream = stream ?? throw new ArgumentNullException($"{nameof(stream)} cannot be null.");
+            _serializer = serializer ?? throw new ArgumentNullException($"{nameof(serializer)} cannot be null");
+            _payloadFactory = payloadFactory ?? throw new ArgumentNullException($"{nameof(payloadFactory)} cannot be null");
+            _logger = logger ?? throw new ArgumentNullException($"{nameof(logger)} cannt be null.");            
         }
 
         public IEnumerable<T> Execute<T>(string query) where T : OrientDBEntity
         {
-            return _stream.Send(new DatabaseCommandOperation<T>(_payloadFactory, _stream.ConnectionMetaData, _serializer, query)).Results;
+            return _stream.Send(new DatabaseCommandOperation<T>(_payloadFactory, _stream.ConnectionMetaData, _serializer, _logger, query)).Results;
         }
 
         public IOrientDBCommandResult Execute(string query)

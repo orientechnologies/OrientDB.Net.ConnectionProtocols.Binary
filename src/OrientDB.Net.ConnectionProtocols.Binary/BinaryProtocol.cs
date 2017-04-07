@@ -1,13 +1,10 @@
 ﻿using OrientDB.Net.ConnectionProtocols.Binary.Core;
-using OrientDB.Net.ConnectionProtocols.Binary.Contracts;
 using OrientDB.Net.Core.Abstractions;
-using OrientDB.Net.Core.Models;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary
 {
     public class BinaryProtocol : IOrientDBConnectionProtocol<byte[]>
     {
-        private static IOrientDBConnection _connection;
         private readonly ServerConnectionOptions _options;
         private static OrientDBBinaryServerConnection _serverConnection;
 
@@ -28,7 +25,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary
         public IOrientServerConnection CreateServerConnection(IOrientDBRecordSerializer<byte[]> serializer, IOrientDBLogger logger)
         {
             if (_serverConnection == null)
-                _serverConnection = new OrientDBBinaryServerConnection(_options, serializer);
+                _serverConnection = new OrientDBBinaryServerConnection(_options, serializer, logger);
             return _serverConnection;
         }
 

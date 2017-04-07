@@ -1,6 +1,7 @@
 ﻿using OrientDB.Net.ConnectionProtocols.Binary.Contracts;
 using OrientDB.Net.ConnectionProtocols.Binary.Extensions;
 using OrientDB.Net.ConnectionProtocols.Binary.Operations;
+using OrientDB.Net.Core.Abstractions;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
@@ -12,6 +13,8 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 {
     public class OrientDBBinaryConnectionStream
     {
+        private readonly IOrientDBLogger _logger;
+
         public ConnectionMetaData ConnectionMetaData { get; private set; }
         private readonly ServerConnectionOptions _connectionOptions;
 
@@ -20,10 +23,13 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
         internal ConcurrentQueue<OrientDBNetworkConnection> StreamPool { get { return _streamPool; } }
 
-        public OrientDBBinaryConnectionStream(ServerConnectionOptions options)
+        public OrientDBBinaryConnectionStream(ServerConnectionOptions options, IOrientDBLogger logger)
         {
             _connectionOptions = options;
+            _logger = logger;
 
+
+            _logger.Debug($"Creating {options.PoolSize} connections to OrientDB Server {options.HostName}");
             for (var i = 0; i < options.PoolSize; i++)
             {
                 _streamPool.Enqueue(CreateNetworkStream());

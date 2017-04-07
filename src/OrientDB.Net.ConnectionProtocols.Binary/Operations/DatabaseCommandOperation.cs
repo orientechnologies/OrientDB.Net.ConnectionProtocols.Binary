@@ -18,23 +18,18 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
         private readonly ICommandPayloadConstructorFactory _payloadFactory;
         private readonly ConnectionMetaData _metaData;
         private readonly IOrientDBRecordSerializer<byte[]> _serializer;
+        private readonly IOrientDBLogger _logger;
 
-        public DatabaseCommandOperation(ICommandPayloadConstructorFactory payloadFacctory, ConnectionMetaData metaData, IOrientDBRecordSerializer<byte[]> serializer, string query, string fetchPlan = "*:0")
+        public DatabaseCommandOperation(ICommandPayloadConstructorFactory payloadFactory, ConnectionMetaData metaData, IOrientDBRecordSerializer<byte[]> serializer, IOrientDBLogger logger, string query, string fetchPlan = "*:0")
         {
-            if (payloadFacctory == null)
-                throw new ArgumentNullException($"{nameof(payloadFacctory)} cannot be null.");
-            if (metaData == null)
-                throw new ArgumentNullException($"{nameof(metaData)} cannot be null.");
-            if (serializer == null)
-                throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
+            _fetchPlan = fetchPlan;
+            _payloadFactory = payloadFactory ?? throw new ArgumentNullException($"{nameof(payloadFactory)} cannot be null.");
+            _metaData = metaData ?? throw new ArgumentNullException($"{nameof(metaData)} cannot be null.");
+            _serializer = serializer ?? throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
+            _logger = logger ?? throw new ArgumentNullException($"{nameof(logger)} cannot be null.");
             if (string.IsNullOrWhiteSpace(query))
                 throw new ArgumentException($"{nameof(query)} cannot be zero length or null.");
-
             _query = query;
-            _fetchPlan = fetchPlan;
-            _payloadFactory = payloadFacctory;
-            _metaData = metaData;
-            _serializer = serializer;
         }
 
         public Request CreateRequest(int sessionId, byte[] token)

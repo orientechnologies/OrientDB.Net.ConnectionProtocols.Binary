@@ -10,7 +10,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Tests.CoreTests
         [Test]
         public void ItShouldThrowAnExceptionWhenPassedNullOptions()
         {
-            Assert.Throws(typeof(ArgumentNullException), () => new OrientDBBinaryConnection(null, null));
+            Assert.Throws(typeof(ArgumentNullException), () => new OrientDBBinaryConnection(null, null, null));
         }
 
         [Test]
@@ -21,25 +21,25 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Tests.CoreTests
 
             };
 
-            Assert.Throws(typeof(ArgumentNullException), () => new OrientDBBinaryConnection(options, null));
+            Assert.Throws(typeof(ArgumentNullException), () => new OrientDBBinaryConnection(options, null, null));
         }
 
         [Test]
         public void ItShouldThrowAnExceptionWithAZeroLengthOrNullHostname()
         {
-            Assert.Throws(typeof(ArgumentException), () => new OrientDBBinaryConnection(null, null, null, null));
+            Assert.Throws(typeof(ArgumentException), () => new OrientDBBinaryConnection(null, null, null, null, null));
         }
 
         [Test]
         public void ItShouldThrowAnExceptionWithAZeroLengthOrNullUsername()
         {
-            Assert.Throws(typeof(ArgumentException), () => new OrientDBBinaryConnection("localhost", null, null, null));
+            Assert.Throws(typeof(ArgumentException), () => new OrientDBBinaryConnection("localhost", null, null, null, null));
         }
 
         [Test]
         public void ItShouldThrowAnExceptionWithAZeroLengthOrNullPassword()
         {
-            Assert.Throws(typeof(ArgumentException), () => new OrientDBBinaryConnection("localhost", "root", null, null));
+            Assert.Throws(typeof(ArgumentException), () => new OrientDBBinaryConnection("localhost", "root", null, null, null));
         }
     }
 }

@@ -15,24 +15,20 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
         private readonly ConnectionMetaData _metaData;
         private readonly IOrientDBRecordSerializer<byte[]> _serializer;
         private readonly ServerConnectionOptions _options;
+        private readonly IOrientDBLogger _logger;
 
-        public DatabaseCreateOperation(string databaseName, DatabaseType databaseType, StorageType storageType, ConnectionMetaData metaData, ServerConnectionOptions options, IOrientDBRecordSerializer<byte[]> serializer)
+        public DatabaseCreateOperation(string databaseName, DatabaseType databaseType, StorageType storageType, ConnectionMetaData metaData, ServerConnectionOptions options, IOrientDBRecordSerializer<byte[]> serializer, IOrientDBLogger logger)
         {
-            if (options == null)
-                throw new ArgumentNullException($"{nameof(options)} cannot be null.");
-            if (metaData == null)
-                throw new ArgumentNullException($"{nameof(metaData)} cannot be null.");
-            if (serializer == null)
-                throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
             if (string.IsNullOrWhiteSpace(databaseName))
                 throw new ArgumentException($"{nameof(databaseName)} cannot be zero length or null.");
+            _metaData = metaData ?? throw new ArgumentNullException($"{nameof(metaData)} cannot be null.");
+            _options = options ?? throw new ArgumentNullException($"{nameof(options)} cannot be null.");
+            _serializer = serializer ?? throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
+            _logger = logger ?? throw new ArgumentNullException($"{nameof(logger)} cannot be null");
 
             _databaseName = databaseName;
             _databaseType = databaseType;
-            _storageType = storageType;
-            _metaData = metaData;
-            _options = options;
-            _serializer = serializer;
+            _storageType = storageType;           
         }
 
         public Request CreateRequest(int sessionId, byte[] token)
@@ -65,7 +61,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
                 Port = _options.Port,
                 Type = _databaseType,
                 UserName = _options.UserName
-            }, _serializer);
+            }, _serializer, _logger);
         }
     }
 }

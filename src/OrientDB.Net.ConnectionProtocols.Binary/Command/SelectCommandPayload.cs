@@ -1,6 +1,7 @@
 ﻿using OrientDB.Net.ConnectionProtocols.Binary.Constants;
 using OrientDB.Net.ConnectionProtocols.Binary.Core;
 using OrientDB.Net.ConnectionProtocols.Binary.Operations;
+using OrientDB.Net.Core.Abstractions;
 using System;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Command
@@ -10,12 +11,14 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
         private readonly string _sqlString;
         private readonly string _fetchPlan;
         private readonly ConnectionMetaData _metaData;
+        private readonly IOrientDBLogger _logger;
 
-        public SelectCommandPayload(string sql, string fetchPlan, ConnectionMetaData metaData)
+        public SelectCommandPayload(string sql, string fetchPlan, ConnectionMetaData metaData, IOrientDBLogger logger)
         {
             _sqlString = sql;
             _fetchPlan = fetchPlan;
             _metaData = metaData;
+            _logger = logger ?? throw new ArgumentNullException($"{nameof(logger)} cannot be null.");
         }
 
         public Request CreatePayloadRequest(int sessionId, byte[] token)

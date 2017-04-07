@@ -12,9 +12,14 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
         private readonly ServerConnectionOptions _options;
         private readonly IOrientDBRecordSerializer<byte[]> _serializer;
         private OrientDBBinaryConnectionStream _connectionStream;
+        private readonly IOrientDBLogger _logger;
 
-        public OrientDBBinaryServerConnection(ServerConnectionOptions options, IOrientDBRecordSerializer<byte[]> serializer)
+        public OrientDBBinaryServerConnection(ServerConnectionOptions options, IOrientDBRecordSerializer<byte[]> serializer, IOrientDBLogger logger)
         {
+            _logger = logger;
+
+            _logger.Debug("OrientDBBinaryServerConnection.Ctor()");
+
             if (options == null)
                 throw new ArgumentNullException($"{nameof(options)} cannot be null.");
             if (serializer == null)
@@ -28,7 +33,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
         public void Open()
         {
-            _connectionStream = new OrientDBBinaryConnectionStream(_options);
+            _connectionStream = new OrientDBBinaryConnectionStream(_options, _logger);
             foreach(var stream in _connectionStream.StreamPool)
             {
                 var _openResult = _connectionStream.Send(new ServerOpenOperation(_options, _connectionStream.ConnectionMetaData));
@@ -47,7 +52,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             if (string.IsNullOrWhiteSpace(database))
                 throw new ArgumentException($"{nameof(database)} cannot be null or zero length.");
 
-            return _connectionStream.Send(new DatabaseCreateOperation(database, databaseType, storageType, _connectionStream.ConnectionMetaData, _options, _serializer));
+            return _connectionStream.Send(new DatabaseCreateOperation(database, databaseType, storageType, _connectionStream.ConnectionMetaData, _options, _serializer, _logger));
         }
 
         public IOrientDatabaseConnection DatabaseConnect(string database, DatabaseType type, int poolSize = 10)
@@ -64,7 +69,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
                 Port = _options.Port,
                 Type = type,
                 UserName = _options.UserName
-            }, _serializer);
+            }, _serializer, _logger);
         }
 
         public void DeleteDatabase(string database, StorageType storageType)
