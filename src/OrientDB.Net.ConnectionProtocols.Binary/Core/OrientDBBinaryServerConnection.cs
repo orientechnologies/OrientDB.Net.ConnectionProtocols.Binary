@@ -19,21 +19,16 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             _logger = logger;
 
             _logger.Debug("OrientDBBinaryServerConnection.Ctor()");
-
-            if (options == null)
-                throw new ArgumentNullException($"{nameof(options)} cannot be null.");
-            if (serializer == null)
-                throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
-
-            _options = options;
-            _serializer = serializer;
+            _options = options ?? throw new ArgumentNullException($"{nameof(options)} cannot be null.");
+            _serializer = serializer ?? throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
 
             Open();
         }
 
-        public void Open()
+        private void Open()
         {
             _connectionStream = new OrientDBBinaryConnectionStream(_options, _logger);
+            _logger.Debug("Opening connections");
             foreach(var stream in _connectionStream.StreamPool)
             {
                 var _openResult = _connectionStream.Send(new ServerOpenOperation(_options, _connectionStream.ConnectionMetaData));
@@ -52,6 +47,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             if (string.IsNullOrWhiteSpace(database))
                 throw new ArgumentException($"{nameof(database)} cannot be null or zero length.");
 
+            _logger.Debug($"Creating database {database}. DatabaseType: {databaseType}. StorageType: {storageType}.");
             return _connectionStream.Send(new DatabaseCreateOperation(database, databaseType, storageType, _connectionStream.ConnectionMetaData, _options, _serializer, _logger));
         }
 
@@ -60,6 +56,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             if (string.IsNullOrWhiteSpace(database))
                 throw new ArgumentException($"{nameof(database)} cannot be null or zero length.");
 
+            _logger.Debug($"Connecting to database: {database}. DatabaseType: {type}. Pool Size: {poolSize}");
             return new OrientDBBinaryConnection(new DatabaseConnectionOptions
             {
                 Database = database,
@@ -77,6 +74,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             if (string.IsNullOrWhiteSpace(database))
                 throw new ArgumentException($"{nameof(database)} cannot be null or zero length.");
 
+            _logger.Debug($"Deleting database {database}. StorageType: {storageType}.");
             _connectionStream.Send(new DatabaseDropOperation(database, storageType, _connectionStream.ConnectionMetaData, _options));
         }
 
