@@ -88,7 +88,12 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
         public void Shutdown(string username, string password)
         {
-            throw new NotImplementedException();
+            if(string.IsNullOrWhiteSpace(username))
+                throw new ArgumentException($"{nameof(username)} cannot be null.");
+            if(string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException($"{nameof(password)} cannot be null.");
+
+            _connectionStream.Send(new ServerShutdownOperation(_connectionStream.ConnectionMetaData, username, password));
         }
 
         public IEnumerable<string> ListDatabases()
