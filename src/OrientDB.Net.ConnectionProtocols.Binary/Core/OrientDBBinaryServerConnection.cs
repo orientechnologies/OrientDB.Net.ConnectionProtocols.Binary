@@ -25,7 +25,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             Open();
         }
 
-        private void Open()
+        public void Open()
         {
             _connectionStream = new OrientDBBinaryConnectionStream(_options, _logger);
             _logger.Debug("Opening connections");
