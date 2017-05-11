@@ -21,6 +21,8 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
                 return new InsertCommandPayload(query, fetchPlan, metaData, _logger);
             if(query.ToLower().StartsWith("create")) // Maybe we really don't need a bunch of different types here.
                 return new InsertCommandPayload(query, fetchPlan, metaData, _logger); // This works...
+            if(query.ToLower().StartsWith("update"))
+                return new InsertCommandPayload(query, fetchPlan, metaData, _logger);
 
             return null;
         }
