@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using OrientDB.Net.Core.Abstractions;
 using OrientDB.Net.Core.Models;
 using System;
+using System.Linq;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 {
@@ -30,8 +31,13 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
         public IOrientDBCommandResult Execute(string query)
         {
-            _stream.Send(new VoidResultDatabaseCommandOperation(_payloadFactory, _stream.ConnectionMetaData, _serializer, query));
-            return new BasicCommandResult();
+            //var results = _stream.Send(new DatabaseCommandOperation<T>(_payloadFactory, _stream.ConnectionMetaData, _serializer, _logger, query)).Results;
+            var results = _stream.Send(new DocumentResultDatabaseCommandOperation(_payloadFactory, _stream.ConnectionMetaData, _serializer, query));
+            return new BasicCommandResult()
+            {
+                RecordsAffected = results.Results.Count(),
+                UpdatedRecords = results.Results
+            };
         }
     }
 }

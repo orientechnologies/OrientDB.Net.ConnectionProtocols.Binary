@@ -1,4 +1,7 @@
-﻿using OrientDB.Net.Core.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using OrientDB.Net.Core.Abstractions;
+using OrientDB.Net.Core.Models;
 
 namespace OrientDB.Net.ConnectionProtocols.Binary.Command
 {
@@ -11,5 +14,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
                 return 0; // This needs to be updated. I don't think this is correct any longer.
             }
         }
+
+        public IEnumerable<DictionaryOrientDBEntity> UpdatedRecords { get; set; }
     }
 }
