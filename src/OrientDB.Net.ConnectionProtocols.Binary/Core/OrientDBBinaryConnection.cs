@@ -13,7 +13,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 {
     public class OrientDBBinaryConnection : IOrientDatabaseConnection, IDisposable
     {
-        private readonly IOrientDBRecordSerializer<byte[]> _serialier;
+        private readonly IOrientDBRecordSerializer<byte[]> _serializer;
         private readonly DatabaseConnectionOptions _connectionOptions;
         private OrientDBBinaryConnectionStream _connectionStream;
         private OpenDatabaseResult _openResult; // might not be how I model this here in the end.
@@ -23,9 +23,9 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
         public OrientDBBinaryConnection(DatabaseConnectionOptions options, IOrientDBRecordSerializer<byte[]> serializer, IOrientDBLogger logger)
         {
             _connectionOptions = options ?? throw new ArgumentNullException($"{nameof(options)} cannot be null.");
-            _serialier = serializer ?? throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
+            _serializer = serializer ?? throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
             _logger = logger ?? throw new ArgumentNullException($"{nameof(logger)} cannot be null.");
-            _payloadFactory = new CommandPayloadConstructorFactory(logger);
+            _payloadFactory = new CommandPayloadConstructorFactory(serializer, logger);
 
             Open();          
         }
@@ -39,7 +39,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentException($"{nameof(password)} cannot be null or zero length.");
             _logger = logger ?? throw new ArgumentNullException($"{nameof(logger)} cannot be null.");
-            _serialier = serializer ?? throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
+            _serializer = serializer ?? throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
 
             _connectionOptions = new DatabaseConnectionOptions
             {
@@ -73,12 +73,12 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
         public IOrientDBCommandResult ExecuteCommand(string sql)
         {
-            return new OrientDBCommand(_connectionStream, _serialier, _payloadFactory, _logger).Execute(sql);
+            return new OrientDBCommand(_connectionStream, _serializer, _payloadFactory, _logger).Execute(sql);
         }
 
         private IOrientDBCommand CreateCommand()
         {
-            return new OrientDBCommand(_connectionStream, _serialier, _payloadFactory, _logger);
+            return new OrientDBCommand(_connectionStream, _serializer, _payloadFactory, _logger);
         }
 
         public void Dispose()
@@ -88,7 +88,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
 
         public IOrientDBTransaction CreateTransaction()
         {
-            return new BinaryOrientDBTransaction(_connectionStream, _serialier, _connectionStream.ConnectionMetaData, (clusterName) =>
+            return new BinaryOrientDBTransaction(_connectionStream, _serializer, _connectionStream.ConnectionMetaData, (clusterName) =>
             {
                 var schema = CreateCommand().Execute<ClassSchema>($"select expand(classes) from metadata:schema").First(n => n.Name == clusterName);
                 return schema.DefaultClusterId;
@@ -98,6 +98,11 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
         public IEnumerable<TResultType> ExecuteQuery<TResultType>(string sql) where TResultType : OrientDBEntity
         {
             return CreateCommand().Execute<TResultType>(sql);
+        }
+
+        public IEnumerable<TResultType> ExecutePreparedQuery<TResultType>(string sql, IDictionary<string, object> parameters) where TResultType : OrientDBEntity
+        {
+            return CreateCommand().ExecutePrepared<TResultType>(sql, parameters);
         }
     }
 }

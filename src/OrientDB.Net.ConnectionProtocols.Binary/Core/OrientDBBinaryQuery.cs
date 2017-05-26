@@ -39,5 +39,10 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
                 UpdatedRecords = results.Results
             };
         }
+
+        public IEnumerable<T> ExecutePrepared<T>(string query, IDictionary<string, object> parameters) where T : OrientDBEntity
+        {
+            return _stream.Send(new DatabasePreparedCommandOperation<T>(_payloadFactory, _stream.ConnectionMetaData, _serializer, _logger, query, parameters)).Results;
+        }
     }
 }

@@ -8,6 +8,8 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Contracts
     {
         IEnumerable<T> Execute<T>(string query) where T : OrientDBEntity;
 
+        IEnumerable<T> ExecutePrepared<T>(string query, IDictionary<string, object> parameters) where T : OrientDBEntity;
+
         IOrientDBCommandResult Execute(string query);
     }
 }

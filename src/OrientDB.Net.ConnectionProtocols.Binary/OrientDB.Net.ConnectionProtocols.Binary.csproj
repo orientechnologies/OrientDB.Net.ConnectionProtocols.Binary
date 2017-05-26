@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrientDB.Net.Core" Version="0.1.11" />
+    <PackageReference Include="OrientDB.Net.Core" Version="0.1.14" /> 
   </ItemGroup>
 
 </Project>
