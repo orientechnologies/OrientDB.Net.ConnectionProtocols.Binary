@@ -16,7 +16,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
             _logger = logger ?? throw new ArgumentNullException($"{nameof(logger)} cannt be null.");
         }
 
-        public ICommandPayload CreatePayload(string query, string fetchPlan, ConnectionMetaData metaData, IDictionary<string, object> parameters = null)
+        public ICommandPayload CreatePayload(string query, string fetchPlan, ConnectionMetaData metaData, string[] parameters)
         {
             if (parameters != null)
                 return CreateParameterizedPayload(query, fetchPlan, metaData, parameters);
@@ -37,7 +37,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
             return null;
         }
 
-        private ICommandPayload CreateParameterizedPayload(string query, string fetchPlan, ConnectionMetaData metaData, IDictionary<string, object> parameters)
+        private ICommandPayload CreateParameterizedPayload(string query, string fetchPlan, ConnectionMetaData metaData, params string[] parameters)
         {
             if (query.ToLower().StartsWith("select"))
                 return new SelectParameterizedCommandPayload(query, parameters, _serializer, fetchPlan, metaData, _logger);          

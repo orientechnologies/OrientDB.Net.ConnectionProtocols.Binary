@@ -19,16 +19,16 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Operations
         private readonly ConnectionMetaData _metaData;
         private readonly IOrientDBRecordSerializer<byte[]> _serializer;
         private readonly IOrientDBLogger _logger;
-        private readonly IDictionary<string, object> _parameters;
+        private readonly string[] _parameters;
 
-        public DatabasePreparedCommandOperation(ICommandPayloadConstructorFactory payloadFactory, ConnectionMetaData metaData, IOrientDBRecordSerializer<byte[]> serializer, IOrientDBLogger logger, string query, IDictionary<string, object> parameters, string fetchPlan = "*:0")
+        public DatabasePreparedCommandOperation(ICommandPayloadConstructorFactory payloadFactory, ConnectionMetaData metaData, IOrientDBRecordSerializer<byte[]> serializer, IOrientDBLogger logger, string query, string fetchPlan = "*:0", params string[] parameters)
         {
             _fetchPlan = fetchPlan;
             _payloadFactory = payloadFactory ?? throw new ArgumentNullException($"{nameof(payloadFactory)} cannot be null.");
             _metaData = metaData ?? throw new ArgumentNullException($"{nameof(metaData)} cannot be null.");
             _serializer = serializer ?? throw new ArgumentNullException($"{nameof(serializer)} cannot be null.");
             _logger = logger ?? throw new ArgumentNullException($"{nameof(logger)} cannot be null.");
-            _parameters = parameters ?? throw new ArgumentNullException($"{nameof(logger)} cannot be null.");
+            _parameters = parameters ?? throw new ArgumentNullException($"{nameof(parameters)} cannot be null.");
             if (string.IsNullOrWhiteSpace(query))
                 throw new ArgumentException($"{nameof(query)} cannot be zero length or null.");
             _query = query;

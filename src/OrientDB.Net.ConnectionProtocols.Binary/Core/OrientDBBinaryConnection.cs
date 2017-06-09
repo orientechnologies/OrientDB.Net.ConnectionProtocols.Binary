@@ -100,7 +100,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             return CreateCommand().Execute<TResultType>(sql);
         }
 
-        public IEnumerable<TResultType> ExecutePreparedQuery<TResultType>(string sql, IDictionary<string, object> parameters) where TResultType : OrientDBEntity
+        public IEnumerable<TResultType> ExecutePreparedQuery<TResultType>(string sql, params string[] parameters) where TResultType : OrientDBEntity
         {
             return CreateCommand().ExecutePrepared<TResultType>(sql, parameters);
         }

@@ -40,9 +40,9 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             };
         }
 
-        public IEnumerable<T> ExecutePrepared<T>(string query, IDictionary<string, object> parameters) where T : OrientDBEntity
+        public IEnumerable<T> ExecutePrepared<T>(string query, params string[] parameters) where T : OrientDBEntity
         {
-            return _stream.Send(new DatabasePreparedCommandOperation<T>(_payloadFactory, _stream.ConnectionMetaData, _serializer, _logger, query, parameters)).Results;
+            return _stream.Send(new DatabasePreparedCommandOperation<T>(_payloadFactory, _stream.ConnectionMetaData, _serializer, _logger, query, "*:0", parameters)).Results;
         }
     }
 }

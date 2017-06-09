@@ -9,8 +9,8 @@ using System.Collections.Generic;
 namespace OrientDB.Net.ConnectionProtocols.Binary.Command
 {
     internal class ParametersEntity : OrientDBEntity
-    {
-        public Dictionary<string, object> @params { get; set; }
+    {    
+        public Dictionary<string, object> parameters { get; set; }
     }
 
     internal class SelectParameterizedCommandPayload : ICommandPayload
@@ -19,10 +19,10 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
         private readonly string _fetchPlan;
         private readonly ConnectionMetaData _metaData;
         private readonly IOrientDBLogger _logger;
-        private readonly IDictionary<string, object> _parameters;
+        private readonly string[] _parameters;
         private readonly IOrientDBRecordSerializer<byte[]> _serializer;
 
-        public SelectParameterizedCommandPayload(string sql, IDictionary<string, object> parameters, IOrientDBRecordSerializer<byte[]> serializer, string fetchPlan, ConnectionMetaData metaData, IOrientDBLogger logger)
+        public SelectParameterizedCommandPayload(string sql, string[] parameters, IOrientDBRecordSerializer<byte[]> serializer, string fetchPlan, ConnectionMetaData metaData, IOrientDBLogger logger)
         {
             _sqlString = sql;
             _fetchPlan = fetchPlan;
@@ -41,7 +41,12 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
             payload.Text = _sqlString;
             payload.NonTextLimit = -1;
             payload.FetchPlan = _fetchPlan;
-            var pe = new ParametersEntity() { @params = _parameters as Dictionary<string, object> };
+            var paramsDictionary = new Dictionary<string, object>();
+            for(var i = 0; i < _parameters.Length; i++)
+            {
+                paramsDictionary.Add(i.ToString(), _parameters[i]);
+            }
+            var pe = new ParametersEntity() { parameters = paramsDictionary };          
             pe.OClassName = string.Empty;
             payload.SerializedParams = _serializer.Serialize(pe);
 
