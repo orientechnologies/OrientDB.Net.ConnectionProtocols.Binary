@@ -30,11 +30,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
             if(_stream != null && _socket != null)
             {
                 _stream.Dispose();
-#if NETCOREAPP1_0
                 _socket.Dispose();
-#else
-                _socket.Close();
-#endif
                 _stream = null;
                 _socket = null;
             }
