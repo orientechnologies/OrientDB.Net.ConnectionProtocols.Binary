@@ -18,7 +18,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
 
         public ICommandPayload CreatePayload(string query, string fetchPlan, ConnectionMetaData metaData, string[] parameters)
         {
-            if (parameters != null)
+            if (parameters != null && parameters.Length > 0)
                 return CreateParameterizedPayload(query, fetchPlan, metaData, parameters);
             return CreateNonParameterizedPayload(query, fetchPlan, metaData);
         }

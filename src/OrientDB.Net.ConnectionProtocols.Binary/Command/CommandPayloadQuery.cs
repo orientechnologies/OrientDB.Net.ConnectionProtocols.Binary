@@ -17,7 +17,7 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
             {
                 return sizeof(int) + BinarySerializer.Length(ClassName) +
                        sizeof(int) + BinarySerializer.Length(Text) +
-                       sizeof(int) + // NonTextLimit
+                       sizeof(int) + //NonTextLimit +
                        sizeof(int) + BinarySerializer.Length(FetchPlan) +
                        sizeof(int) + (SerializedParams != null ? SerializedParams.Length : 0);
             }
