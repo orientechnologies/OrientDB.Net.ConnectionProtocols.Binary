@@ -23,8 +23,10 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Command
                 return new InsertCommandPayload(query, fetchPlan, metaData, _logger); // This works...
             if(query.ToLower().StartsWith("update"))
                 return new InsertCommandPayload(query, fetchPlan, metaData, _logger);
+            if (query.ToLower().StartsWith("delete"))
+                return new InsertCommandPayload(query, fetchPlan, metaData, _logger); // calling the payload of a delete command "insert" ins't very helpful - need to do something better here
 
-            return null;
+            throw new NotImplementedException(string.Format("Cannot determine the appropriate payload type for query '{0}'", query));
         }
     }
 }
