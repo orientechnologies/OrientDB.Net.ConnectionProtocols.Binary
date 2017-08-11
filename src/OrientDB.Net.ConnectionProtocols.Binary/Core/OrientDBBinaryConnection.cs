@@ -69,7 +69,12 @@ namespace OrientDB.Net.ConnectionProtocols.Binary.Core
         {
             _connectionStream.Send(new DatabaseCloseOperation(_openResult.Token, _connectionStream.ConnectionMetaData));
             _connectionStream.Close();
-        }   
+        }
+        
+        public IEnumerable<TResultType> ExecutePreparedQuery<TResultType>(string sql, params string[] parameters) where TResultType : OrientDBEntity
+        {
+            throw new NotImplementedException();
+        }
 
         public IOrientDBCommandResult ExecuteCommand(string sql)
         {
